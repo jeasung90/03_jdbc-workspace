@@ -26,9 +26,13 @@ INSERT INTO MEMBER
 VALUES (SEQ_USERNO.NEXTVAL, 'user01','pass01','홍길순',null,45,'user01@iei.or.kr','01022225555','동해번쩍 서해번쩍','등산, 의적질','2007-07-27');
 
 
+CREATE TABLE TEST(
+    TNO NUMBER,
+    TNAME VARCHAR2(20),
+    TDATE DATE
+);
 
-
-
+SELECT * FROM TEST;
 
 
 
