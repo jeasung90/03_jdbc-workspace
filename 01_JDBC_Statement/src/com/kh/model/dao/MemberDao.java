@@ -414,6 +414,8 @@ public class MemberDao {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","JDBC","JDBC");
 			
+			conn.setAutoCommit(false);
+			
 			stmt = conn.createStatement();
 			
 			result = stmt.executeUpdate(sql);
