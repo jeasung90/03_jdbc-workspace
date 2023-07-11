@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import static com.kh.common.JDBCTemplate.*;
 import com.kh.model.vo.Member;
 import com.kh.view.MemberMenu;
 
@@ -42,36 +43,24 @@ public class MemberDao {
 	
 	/**
 	 * 회원 추가하는 메소드
+	 * @param conn2 
 	 * @param m	입력받은 정보
 	 * @return result 처리된 행 수
 	 */
-	public int insertMember(Member m) {
+	public int insertMember(Connection conn, Member m) {
 		// insert문 => 처리된 행수 => 트랜젝션 처리
 		
 		int result = 0;
-		Connection conn = null;
+		// Conn 은 만들어서 가져옴
 		PreparedStatement pstmt = null;
 		
-		// 실행할 sql문( 미완성된 형태로 둘 수 있음 )
-		// INSERT INTO MEMBER VALUES(seq_userno.nextval,'XXX','XXX','XXX','X',XX ,'XXX','XXXXXX','XXX','XXX,XXX',SYSDATE)
-		// 미리 사용자가 입력한 값들이 들어갈 수 있게 공간확보 (? == 홀더) 만 해두면 됨!
 		String sql = "INSERT INTO MEMBER VALUES(seq_userno.nextval,?,?,?,?,? ,?,?,?,?,SYSDATE)";
 		
-		// 1) jdbc driver 등록
-		
 		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
 			
-			// 2) Connection 생성
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "JDBC", "JDBC");
 			
 			// 3) prepareStatement 객체 생성
-			pstmt = conn.prepareStatement(sql); // 애초에 pstmt 객체 생성시 sql문 담은채로 생성! (지금은 미완성)
-			
-			// > 빈공간을 실제값 (사용자가 입력한 값)으로 채워준 후 실행
-			// pstmt.setString(홀더순번, 대체할 값); => '대체할 값' (홑따옴표 자동으로 해줌)
-			// pstmt.setInt(홀더순번, 대체할 값);
-			
+			pstmt = conn.prepareStatement(sql); 
 			
 			pstmt.setString(1, m.getUserId());
 			pstmt.setString(2, m.getUserPwd());
@@ -83,25 +72,19 @@ public class MemberDao {
 			pstmt.setString(8, m.getAddress());
 			pstmt.setString(9, m.getHobby());
 			
-			// 4,5) sql 문 실행 및 결고 ㅏ받기
+			// 4,5) sql 문 실행 및 결과 받기
 			
-			result = pstmt.executeUpdate(); // 여기서는 sql문 전달하지 않고 그냥 실행해야됨!! 이미 pstmt에 들어가 있음
+			result = pstmt.executeUpdate();
+			
+			
 			
 
-
 			
-			
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
+		}catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
-			try {
-				pstmt.close();
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			close(pstmt);
+			// conn은 아직 반납하면 안됨! (트랜젝션 처리 서비스 가서 해야함!)
 		}
 		
 		return result;
@@ -109,26 +92,20 @@ public class MemberDao {
 
 	/**2. 전체조회 (ArrayList)
 	 * 회원 전체 조회 메소드
+	 * @param conn 
 	 * @return
 	 */
-	public ArrayList<Member> selectList() {
+	public ArrayList<Member> selectList(Connection conn) {
 		// select문 (여러행) => ResultSet 객체
 		ArrayList<Member> list = new ArrayList<Member>(); // 텅 빈 리스트
 		
-		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		
 		String sql = "SELECT * FROM MEMBER";
 		
-		
-		
 			try {
 				
-				Class.forName("oracle.jdbc.driver.OracleDriver");
-				
-				conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "JDBC", "JDBC");
-			
 				pstmt = conn.prepareStatement(sql);
 				
 				rset = pstmt.executeQuery();
@@ -150,41 +127,32 @@ public class MemberDao {
 				}
 				
 				
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}finally {
-				try {
-					rset.close();
-					pstmt.close();
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+				close(rset);
+				close(pstmt);
 			}
 		return list;
 	}
 
 	/**3. 아이디로 찾는 구문
 	 * 사용자의 아이디로 회원 검색 요청을 처리해주는 메소드
-	 * @param userId : 사용자가 입력한 검색하고자 하는 회원 아이디 값
+	 * @param conn2 : 사용자가 입력한 검색하고자 하는 회원 아이디 값
+	 * @param userId 
 	 * @return m : 그 아이디를 가진 회원
 	 */
-	public Member selectByUserId(String userId) {
+	public Member selectByUserId(Connection conn, String userId) {
 		// select문 => 한행문 => ResultSet 객체 => Member
 		Member m = null;
 		
-		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		
 		String sql = "SELECT * FROM MEMBER WHERE USERID = ?";
 		
 		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
 			
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "JDBC", "JDBC");
 			
 			pstmt = conn.prepareStatement(sql);
 			
@@ -209,18 +177,11 @@ public class MemberDao {
 				
 			}
 
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
-			try {
-				rset.close();
-				pstmt.close();
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			close(rset);
+			close(pstmt);
 			
 		}
 		
@@ -228,23 +189,20 @@ public class MemberDao {
 	}
 
 	/** 4. 이름키워드로 정보 찾기
+	 * @param conn 
 	 * @param userName
 	 * @return
 	 */
-	public ArrayList<Member> selectByUserName(String userName) {
+	public ArrayList<Member> selectByUserName(Connection conn, String userName) {
 		
 		ArrayList<Member> list = new ArrayList<Member>(); // 텅 빈 리스트
 		
-		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		
 		String sql = "SELECT * FROM MEMBER WHERE USERNAME LIKE ? "; // CASE 1
 		//String sql = "SELECT * FROM MEMBER WHERE USERNAME LIKE '%' || ? || '%' "; // CASE2
 		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "JDBC", "JDBC");
 			
 			pstmt = conn.prepareStatement(sql);
 			
@@ -269,18 +227,11 @@ public class MemberDao {
 									));
 			}
 			
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
-			try {
-				rset.close();
-				pstmt.close();
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			close(rset);
+			close(pstmt);
 			
 		}
 		return list;
@@ -288,6 +239,7 @@ public class MemberDao {
 
 	/**
 	 * 5. 회원 변경
+	 * @param conn 
 	 * @param userId
 	 * @param userPwd
 	 * @param email
@@ -295,10 +247,9 @@ public class MemberDao {
 	 * @param address 
 	 * @return
 	 */
-	public int updateMember(String userId, String userPwd1,String userPwd2, String email, String phone, String address) {
+	public int updateMember(Connection conn, String userId, String userPwd1,String userPwd2, String email, String phone, String address) {
 		
 		int result = 0;
-		Connection conn = null;
 		PreparedStatement pstmt = null;
 		// update Member set userpwd =? Emil?phone?address? where userid , pw
 		String sql = "UPDATE MEMBER SET USERPWD = ?," //1
@@ -309,9 +260,6 @@ public class MemberDao {
 									 + "AND USERPWD = ?"; // 6
 		
 		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "JDBC", "JDBC");
 			
 			pstmt = conn.prepareStatement(sql);
 			
@@ -324,70 +272,43 @@ public class MemberDao {
 			
 			result = pstmt.executeUpdate();
 			
-			if(result > 0 ) {
-				conn.commit();
-			}else {
-				conn.rollback();
-			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
-			try {
-				pstmt.close();
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			close(pstmt);
 		}
 		return result;
 	}
 
 	/**
 	 * 6. 계정 삭제
+	 * @param conn 
 	 * @param delId
 	 * @param delPwd
 	 * @return
 	 */
-	public int deleteMember(String delId, String delPwd) {
+	public int deleteMember(Connection conn, String delId, String delPwd) {
 
 		int result = 0;
-		Connection conn = null;
 		PreparedStatement pstmt = null;
 		
 		// delete from member where userid = ? and userpwd =?
 		String sql = "DELETE FROM MEMBER WHERE USERID = ? AND USERPWD = ?";
 		
 		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
 			
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "JDBC", "JDBC");
 			
 			pstmt = conn.prepareStatement(sql);
 			
-			pstmt.setString(1, delId );
+			pstmt.setString(1, delId);
 			pstmt.setString(2, delPwd);
 			
 			result = pstmt.executeUpdate();
 			
-			if(result > 0 ) {
-				conn.commit();
-			}else {
-				conn.rollback();
-			}
-			
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
-			try {
-				pstmt.close();
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			close(pstmt);
 		}
 		
 		

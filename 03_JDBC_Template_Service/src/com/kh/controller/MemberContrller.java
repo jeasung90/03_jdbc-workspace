@@ -3,6 +3,7 @@ package com.kh.controller;
 import java.util.ArrayList;
 
 import com.kh.model.dao.MemberDao;
+import com.kh.model.service.MemberService;
 import com.kh.model.vo.Member;
 import com.kh.view.MemberMenu;
 
@@ -20,9 +21,12 @@ public class MemberContrller {
 	 *  : 사용자가 입력했던 정보들이 담겨있는 매개변수
 	 */
 	public void insertMember(String userId, String userPwd, String userName, String gender, String age, String email, String phone, String address, String hobby) {
+		
 		Member m = new Member(userId, userPwd, userName, gender, Integer.parseInt(age), email, phone, address, hobby);
 		
-		int result = new MemberDao().insertMember(m);
+		// int result = new MemberDao().insertMember(m);
+		
+		int result = new MemberService().insertMember(m);
 		
 		if(result > 0 ) {
 			new MemberMenu().dispalySuccess("성공적으로 회원 추가 되었습니다.");
@@ -37,7 +41,7 @@ public class MemberContrller {
 	 */
 	public void selectList() {
 		
-		ArrayList<Member> list = new MemberDao().selectList();
+		ArrayList<Member> list = new MemberService().selectList();
 		
 		if (list.isEmpty()) {
 			new MemberMenu().displayNodata("조회된 결과가 없습니다.");
@@ -52,7 +56,7 @@ public class MemberContrller {
 	 * @param userId
 	 */
 	public void selectByUserId(String userId) {	
-		Member m = new MemberDao().selectByUserId(userId);
+		Member m = new MemberService().selectByUserId(userId);
 		
 		if(m == null) {
 			new MemberMenu().displayNodata(userId+"에 해당하는 검색결과가 없습니다.");
@@ -69,7 +73,7 @@ public class MemberContrller {
 	 */
 	public void selectByUserName(String userName) {
 		
-		ArrayList<Member> list = new MemberDao().selectByUserName(userName);
+		ArrayList<Member> list = new MemberService().selectByUserName(userName);
 		
 		if(list.isEmpty()) {
 			new MemberMenu().displayNodata(userName+"에 해당하는 검색결과가 없습니다.");
@@ -90,7 +94,7 @@ public class MemberContrller {
 	 */
 	public void updateMember(String userId, String userPwd1,  String userPwd2,String email, String phone, String address) {
 		
-		int result = new MemberDao().updateMember(userId,userPwd1,userPwd2,email,phone,address);
+		int result = new MemberService().updateMember(userId,userPwd1,userPwd2,email,phone,address);
 		
 		if(result > 0 ) {
 			new MemberMenu().dispalySuccess("회원정보가 수정 되었습니다.");
@@ -110,7 +114,8 @@ public class MemberContrller {
 	 * @param delPwd
 	 */
 	public void deleteMember(String delId, String delPwd) {
-		int result = new MemberDao().deleteMember(delId,delPwd);
+		
+		int result = new MemberService().deleteMember(delId,delPwd);
 
 		if(result > 0 ) {
 			new MemberMenu().dispalySuccess("성공적으로 회원정보가 삭제 되었습니다.");
