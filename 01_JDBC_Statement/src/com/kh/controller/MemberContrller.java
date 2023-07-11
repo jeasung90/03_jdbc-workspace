@@ -85,9 +85,40 @@ public class MemberContrller {
 
 	}
 
+	/** 
+	 * 이름으로 키워드 검색 요청시 처리해주는 메소드
+	 * @param userName
+	 */
 	public void selectByUserName(String userName) {
-	new MemberDao().selectByUserName(userName);
+		ArrayList<Member> list = new MemberDao().selectByUserName(userName);
 		
+		// 조회된 데이터가 있는지 판단 후 사용자가 보게될 응답화면 지정
+		if(list.isEmpty()) { // 텅 비어있을 경우 == 조회된 데이터 없었을 경우
+			new MemberMenu().displayNodata("전체 조회결과가 없습니다.");
+		}else { // 데이터가 뭐라도 있을 경우
+			new MemberMenu().displatMemberList(list);
+		}
+		
+		
+	}
+
+	public void updateMember(String userId, String userPwd, String email, String phone, String address) {
+		Member m = new Member();
+		m.setUserId(userId);
+		m.setUserPwd(userPwd);
+		m.setEmail(email);
+		m.setPhone(phone);
+		m.setAddress(address);
+		
+		int result = new MemberDao().updateMember(m);
+		
+		if(result>0) {// 성공
+			new MemberMenu().dispalyDelete("성공적으로 변경되었습니다.");
+		}else { // 실패2
+			new MemberMenu().displatNotDelete("회원정보 변경에 실패하였습니다.\n아이디와 변결할 내용을 확인해주세요.");
+		}
+		
+		// new MemberDao().updateMember(userId,userPwd,email,phone,address);
 		
 	}
 }

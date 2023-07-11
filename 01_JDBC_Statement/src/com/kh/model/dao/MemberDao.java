@@ -179,7 +179,6 @@ public class MemberDao {
 	 * 사용자의 아이디로 회원검색요청 처리해주는 메소드
 	 * @param userId	사용자가 입력한 검색하고자 하는 회원 아이디값
 	 */
-	@SuppressWarnings("finally")
 	public void selectByUserId(String userId) {
 		// select문 (한행)
 		// 그럼 굳이 ArrayList 필요 없음 한개만 있으면 될듯
@@ -248,6 +247,7 @@ public class MemberDao {
 	}
 
 	public int deleteMember(String delId, String delPwd) {
+		
 		Connection conn = null;
 		Statement stmt = null;
 		int result =0;
@@ -290,10 +290,13 @@ public class MemberDao {
 		
 	}
 
-	public void selectByUserName(String userName) {
+	@SuppressWarnings("finally")
+	public ArrayList<Member> selectByUserName(String userName) {
+		ArrayList<Member> list = new ArrayList<>();
+
 		// select문 (한행)
 				// 그럼 굳이 ArrayList 필요 없음 한개만 있으면 될듯
-				Member m = null; // 조회 결과가 있을수도 있고 없을수도 있으니까
+				//Member m = null; // 조회 결과가 있을수도 있고 없을수도 있으니까
 				
 				// JDBC 개체
 				Connection conn = null;
@@ -312,22 +315,38 @@ public class MemberDao {
 					rset = stmt.executeQuery(sql);
 					
 					
-					if(rset.next()) { // 한 행이라도 조회됬을때
-						// 조회됬다면 해당 조회 된 컬럼값들을 뽑아서 한 Member 객체의 각 필드에 담기
-						m = new Member(rset.getInt("USERNO"),
-									   rset.getString("USERID"),
-									   rset.getString("USERPWD"),
-									   rset.getString("USERNAME"),
-									   rset.getString("gender"),
-									   rset.getInt("age"),
-									   rset.getString("email"),
-									   rset.getString("phone"),
-									   rset.getString("address"),
-									   rset.getString("hobby"),
-									   rset.getDate("enrolldate"));
-
+					/*
+					 * if(rset.next()) { // 한 행이라도 조회됬을때 m = new Member(rset.getInt("USERNO"),
+					 * rset.getString("USERID"), rset.getString("USERPWD"),
+					 * rset.getString("USERNAME"), rset.getString("gender"), rset.getInt("age"),
+					 * rset.getString("email"), rset.getString("phone"), rset.getString("address"),
+					 * rset.getString("hobby"), rset.getDate("enrolldate")); list.add(m);
+					 * 
+					 * 
+					 * }else {
+					 * 
+					 * }
+					 */
+					
+					while(rset.next()) {
 						
-					}else { 
+						// 현재 rset의 커서가 가리키고 있는 한 행의 데이터들을 싹 뽑아서 member 객체 주섬주섬 담기
+						Member m = new Member()	;
+						
+						m.setUserNo(rset.getInt("USERNO"));
+						m.setUserId(rset.getString("USERID"));
+						m.setUserPwd(rset.getString("USERPWD"));
+						m.setUserName(rset.getString("USERNAME"));
+						m.setGender(rset.getString("GENDER"));
+						m.setAge(rset.getInt("AGE"));
+						m.setEmail(rset.getString("EMAIL")); 
+						m.setPhone(rset.getString("PHONE")); 
+						m.setAddress(rset.getString("ADDRESS")); 
+						m.setHobby(rset.getString("HOBBY")); 
+						m.setEnrollDate(rset.getDate("ENROLLDATE"));
+						// 현재 참조하고 있는 행에 대한 모든 컬럼에 대한 테이블들을 한 Member 객체에 담기
+						
+						list.add(m);// 리스트에 해당 회원의 객체 차곡차곡담기
 						
 					}
 					// 위으 조건문 다 끝난 시점에
@@ -348,12 +367,77 @@ public class MemberDao {
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}
-					if(m == null) { // 검색결과가 없을 경우 (조회된 데이터 없음)
+					/*if(m == null) { // 검색결과가 없을 경우 (조회된 데이터 없음)
 						new MemberMenu().displayNodata(userName+"에 해당하는 검색결과가 없습니다.");
 						
 					}else {
-						new MemberMenu().dispalyMember(m);
+						new MemberMenu().displatMemberList(list);
 					}
-				}
+				}*/
+				return list; // 텅빈리스트 | 뭐라도 담겨있는 리스트
+	}
+	}
+
+	/*public void updateMember(String userId, String userPwd, String email, String phone, String address) {
+		Connection conn = null;
+		Statement stmt = null;
+		int result =0;
+		
+		String sql = "update MEMBER SET userpwd = '" + userPwd
+				+ "', EMAIL = '" +email
+				+ "', PHONE = '" +phone
+				+ "', ADDRESS = '" +address
+				+ "WHERE USERID  = '" + userId
+				+ "'";
+	}
+	*/
+	/**
+	 * 사용자가 입력한 아이디의 정보 변경 요청 처리해주는 메소드
+	 * @param m  
+	 * @return result :  처리된 행 수
+	 */
+	public int updateMember(Member m) {
+		Connection conn = null;
+		Statement stmt = null;
+		int result =0;
+		String sql = "UPDATE MEMBER "
+				+ "SET USERPWD = '" + m.getUserPwd()
+				+ "', EMAIL = '" + m.getEmail()
+				+ "', PHONE = '" + m.getPhone()
+				+ "', ADDRESS = '" + m.getAddress()
+				
+				+ "' WHERE USERID  = '" + m.getUserId()
+				+ "'";
+
+		
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","JDBC","JDBC");
+			
+			stmt = conn.createStatement();
+			
+			result = stmt.executeUpdate(sql);
+			
+			if(result > 0 ) {
+				conn.commit();
+			}else {
+				conn.rollback();
+			}
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		return result;
+		}
+		
+		
 	}
 }

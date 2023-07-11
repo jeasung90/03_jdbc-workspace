@@ -63,10 +63,10 @@ public class TestRun {
 			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "JDBC", "JDBC");
 		
 		// 3. Statement 객체 생성
-			stmt = conn.createStatement();
+			stmt = conn.createStatement(); 
 			
 		// 4,5. sql문 전달하면서 실행 후 결과받기 (처리된 행수)
-			result = stmt.executeUpdate(sql);
+			result = stmt.executeUpdate(sql);== 내눈엔 몇개 변경됬다
 			// 내가 실행할 sql문 DML문일 경우 => stmt.executeupdate("dml문") : int
 			// 내가 실행할 sql문 SELECT문 일 경우 => stmt.executeQuery("select문") : REsultSet
 			
@@ -91,7 +91,6 @@ public class TestRun {
 				stmt.close();
 				conn.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			

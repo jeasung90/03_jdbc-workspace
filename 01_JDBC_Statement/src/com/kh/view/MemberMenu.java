@@ -45,14 +45,16 @@ public class MemberMenu {
 				mc.selectList();// 입력받을게 없으면 바로 controller
 				break;
 			case 3 :
-				String userId = inputMemberId();
-				mc.selectByUserId(userId);
+				// String userId = inputMemberId();
+				// 
+				mc.selectByUserId(inputMemberId());
 				break;
 			case 4 :
 				String userName =selectByUserName();
 				mc.selectByUserName(userName);
 				break;
 			case 5 :
+				updateMember();
 				break;
 			case 6 :
 				deleteMember();
@@ -73,6 +75,8 @@ public class MemberMenu {
 	}
 
 
+
+	//---------------------------------------------------------------------------------------------
 	private void deleteMember() {
 		System.out.print("탈퇴를 원하시는 계정의\n아이디 : ");
 		String delId = sc.nextLine();
@@ -81,17 +85,16 @@ public class MemberMenu {
 		String delPwd = sc.nextLine();
 		
 		mc.deleteMember(delId,delPwd);
-		
-		
-		
 	}
 
-
+	/**
+	 * 사용자에게 검색할 회원명(키워드) 입력받은 후 그때 입력된 값을 반환시켜주는 메소드
+	 * @return 사용자가 입력한 회원명(키워드)
+	 */
 	private String selectByUserName() {
 		System.out.print("\n 회원의 이름 입력(키워드 가능) : ");
 		return sc.nextLine();
 	}
-
 
 	/**
 	 * 회원 추가 창( 서브화면 )
@@ -129,23 +132,18 @@ public class MemberMenu {
 		}
 	}
 	
+	
+	//--------------------응답화면--------------------
 	/**
 	 * 사용자에게 회원 아이디 입력 받은 후 그 때 입력된 값을 반환시켜주는 메소드
 	 * @return 사용자가 입력한 아이디값
 	 */
 	private String inputMemberId() { // 아이디로 찾는 메소드
-		System.out.print("\n 회원의 아이디 입력 : ");
+		System.out.print("\n회원의 아이디 입력 : ");
 		return sc.nextLine();
-		
-		
-		
-		
-		
-		
-		
-		
+
 	}
-	//--------------------응답화면--------------------
+	
 	/**
 	 * 서비스 요청 처리 후 성공했을 경우 사용자가 보게 될 응답화면
 	 * @param message
@@ -201,7 +199,7 @@ public class MemberMenu {
 
 
 	/**
-	 * 조회된 값을 출력하는 화면
+	 * 조회된 값 1개를 출력하는 화면
 	 * @param m
 	 */
 	public void dispalyMember(Member m) { 
@@ -209,6 +207,26 @@ public class MemberMenu {
 		System.out.println(m);
 	}
 
+	private void updateMember() {
+		System.out.println("\n ==== 회원정보 변경 ====");
+		
+		// 아이디 => 바꿀 내용(비번,이메일,전번,주소)
+		//System.out.print("회원정보 변경할 회원 아이디 : ");
+		//String userid = sc.nextLine();
+		String userId = inputMemberId();
+		
+		System.out.print("변경하실 암호 : ");
+		String userPwd = sc.nextLine();
+		System.out.print("변경하실 이메일 : ");
+		String email = sc.nextLine();
+		System.out.print("변경하실 전화번호 : ");
+		String phone = sc.nextLine();
+		System.out.print("변경하실 주소 : ");
+		String address = sc.nextLine();
+		
+		mc.updateMember(userId,userPwd,email,phone,address);
+	}
+	
 	}
 	
 	
