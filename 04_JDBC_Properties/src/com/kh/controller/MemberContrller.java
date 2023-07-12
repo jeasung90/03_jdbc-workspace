@@ -94,7 +94,6 @@ public class MemberContrller {
 	 */
 	public void updateMember(String userId, String userPwd1,  String userPwd2,String email, String phone, String address) {
 		
-		
 		int result = new MemberService().updateMember(userId,userPwd1,userPwd2,email,phone,address);
 		
 		if(result > 0 ) {
