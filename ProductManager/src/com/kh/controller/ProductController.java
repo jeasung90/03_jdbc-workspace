@@ -2,6 +2,7 @@ package com.kh.controller;
 
 import java.util.ArrayList;
 
+import com.kh.model.dao.ProductDao;
 import com.kh.model.service.ProductService;
 import com.kh.model.vo.Product;
 import com.kh.view.ProductMenu;
@@ -21,6 +22,15 @@ public class ProductController {
 			new ProductMenu().listData(list);
 		}
 		
+	}
+
+	/**
+	 * 2. 신규등록
+	 * @param p
+	 */
+	public void newProduct(Product p) {
+		
+		int result = ProductDao.newProduct(p);
 	}
 
 }

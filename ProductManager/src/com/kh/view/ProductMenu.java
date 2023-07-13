@@ -31,6 +31,7 @@ public class ProductMenu {
 				pc.selectAll();
 				break;
 			case 2 :
+				newProduct();
 				break;
 			case 3 :
 				break;
@@ -47,7 +48,27 @@ public class ProductMenu {
 		}
 		
 	}
-//------------------------------------------- 디스플 ---------------------
+	//-----------------------------------------입력 -------------------------------
+/**2. 입력받는 메소드
+ * 
+ */
+private void newProduct() {
+	System.out.println("==== 제품 추가 ====");
+	System.out.println("제품번호 :");
+	String product_id = sc.nextLine();
+	System.out.println("제품명 :");
+	String p_name = sc.nextLine();
+	System.out.println("가격 :");
+	String price = sc.nextLine();
+	System.out.println("설명 :");
+	String description = sc.nextLine();
+	System.out.println("재고 :");
+	String stock = sc.nextLine();
+	Product p = new Product(product_id,p_name,Integer.parseInt(price) ,description,Integer.parseInt(stock));
+	pc.newProduct(p);
+	
+	}
+	//------------------------------------------- 디스플 ---------------------
 	/** 1.
 	 * 데타 없을떄
 	 * @param string
