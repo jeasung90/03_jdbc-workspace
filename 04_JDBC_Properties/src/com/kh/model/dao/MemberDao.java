@@ -161,7 +161,7 @@ public class MemberDao {
 			
 			rset = pstmt.executeQuery();
 			
-			if(rset.next()) {
+			while(rset.next()) {
 				m = new Member(rset.getInt("userno"),
 										rset.getString("userid"),
 										rset.getString("userpwd"),
@@ -174,8 +174,6 @@ public class MemberDao {
 										rset.getString("hobby"),
 										rset.getDate("enrolldate")
 										);
-			}else {
-				
 			}
 
 		} catch (SQLException e) {

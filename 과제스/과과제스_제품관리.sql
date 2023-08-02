@@ -59,12 +59,37 @@ VALUES
      , 5
      );
 
+INSERT INTO PRODUCT
+     (
+        PRODUCT_ID
+      , P_NAME
+      , PRICE
+      , DESCRIPTION
+      , STOCK
+      )
+ VALUES
+      (
+         ?
+       , ?
+       , ?
+       , ?
+       , ?
+       );
 
+UPDATE PRODUCT
+   SET PRODUCT_ID = 's24'
+     , P_NAME = '°µ³á½Ã 24'
+     , PRICE =1500000
+     , DESCRIPTION ='½ÅÇü ³ª¿Ã°ÅÀÓ'
+     , STOCK =1
+ WHERE PRODUCT_ID = 's23';
 
+DELETE product
+where PRODUCT_ID=?
 
-
-
-
+SELECT *
+	   	  FROM PRODUCT
+	   	 WHERE PRODUCT_ID = 
 
 
 

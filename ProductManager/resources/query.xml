@@ -5,6 +5,43 @@
 	SELECT *
 	  FROM product
 	</entry>
-
+	<entry key = "newProduct">
+	INSERT INTO PRODUCT
+     	 (
+       	   PRODUCT_ID
+         , P_NAME
+         , PRICE
+      	 , DESCRIPTION
+      	 , STOCK
+      	 )
+  	VALUES
+    	 (
+           ?
+       	 , ?
+       	 , ?
+       	 , ?
+       	 , ?
+       	 )
+	</entry>
+	
+	<entry key = "updataProduct">
+	UPDATE PRODUCT
+	   SET PRODUCT_ID = ?
+	     , P_NAME = ?
+	     , PRICE = ?
+	     , DESCRIPTION = ?
+	     , STOCK = ?
+	 WHERE PRODUCT_ID = ?
+	</entry>
+	<entry key = "deleteProduct">
+		DELETE product
+		 WHERE PRODUCT_ID=?
+	</entry>
+	<entry key = "selectProduct">
+	    SELECT *
+	   	  FROM PRODUCT
+	   	 WHERE PRODUCT_ID = ?
+	</entry>
+	
 
 </properties>
